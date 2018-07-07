@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityStandardAssets._2D;
 
 public class PlayerCharacter : MonoBehaviour
 {
@@ -17,6 +18,23 @@ public class PlayerCharacter : MonoBehaviour
     {
         distanceScore = Mathf.Max(distanceScore, (int)this.transform.position.x);
         int totalScore = distanceScore * GameplayConstants.SCORE_DISTANCE_MULTIPLIER + enemyScore * GameplayConstants.SCORE_ENEMY_MULTIPLIER;
+    }
+
+    void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.gameObject.tag == GameplayConstants.TAG_Enemy)
+        {
+            Vector3 enemyPos = col.collider.bounds.center;
+            float enemyWidth = col.collider.bounds.extents.x;
+            if (enemyPos.y < this.transform.position.y && Mathf.Abs(enemyPos.x - this.transform.position.x) < enemyWidth)
+            {
+                Enemy enemy = col.gameObject.GetComponent<Enemy>();
+                if (enemy != null)
+                {
+                    enemy.Squash();
+                }
+            }
+        }
     }
 
     void OnTriggerEnter2D(Collider2D col)
